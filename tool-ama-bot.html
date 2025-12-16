@@ -38,15 +38,15 @@
       </div>
 
       <div class="tool-card">
-        <h3 style="margin-top:0;">Demo shell</h3>
-        <p class="info">Hook your chatbot backend endpoint here to power the UI.</p>
-        <div style="background: var(--bg-card-strong); padding:14px; border-radius:12px; border:1px solid var(--border);">
-          <div class="info" style="margin-bottom:8px;">Chat transcript (placeholder)</div>
-          <div style="min-height:140px; color: var(--muted);">Awaiting messages...</div>
-          <div style="display:flex; gap:8px; margin-top:12px;">
-            <input style="flex:1;" type="text" placeholder="Ask about cards, rewards, limits..." disabled />
-            <button class="action" disabled>Send</button>
-          </div>
+        <h3 style="margin-top:0;">Live chat shell</h3>
+        <p class="info">Type to chat. Configure WEBHOOK_URL to connect your backend; otherwise a mock reply is used.</p>
+        <div id="chatBox" style="background: var(--bg-card-strong); padding:14px; border-radius:12px; border:1px solid var(--border); display:flex; flex-direction:column; gap:10px; min-height:260px;">
+          <div class="info" style="margin-bottom:4px;">Chat transcript</div>
+          <div id="messages" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:8px;"></div>
+          <form id="chatForm" style="display:flex; gap:8px; align-items:center;">
+            <input id="chatInput" style="flex:1;" type="text" placeholder="Ask about cards, rewards, limits..." autocomplete="off" />
+            <button class="action" type="submit" id="chatSend">Send</button>
+          </form>
         </div>
       </div>
     </main>
@@ -61,6 +61,76 @@
       </div>
     </footer>
   </div>
+  <script>
+  // Set your backend endpoint here. If left blank, a mock reply is returned.
+  const WEBHOOK_URL = '';
+
+  const messagesEl = document.getElementById('messages');
+  const form = document.getElementById('chatForm');
+  const input = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('chatSend');
+
+  const messages = [];
+
+  function addMessage(role, text) {
+    messages.push({ role, text });
+    render();
+  }
+
+  function render() {
+    messagesEl.innerHTML = '';
+    messages.forEach((m) => {
+      const div = document.createElement('div');
+      div.style.padding = '10px 12px';
+      div.style.borderRadius = '12px';
+      div.style.lineHeight = '1.5';
+      div.style.whiteSpace = 'pre-wrap';
+      div.style.background = m.role === 'user' ? 'rgba(79,139,255,0.18)' : 'rgba(255,255,255,0.06)';
+      div.style.border = '1px solid var(--border)';
+      div.textContent = (m.role === 'user' ? 'You: ' : 'Bot: ') + m.text;
+      messagesEl.appendChild(div);
+    });
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  async function sendMessage(text) {
+    addMessage('user', text);
+    const placeholderId = `pending-${Date.now()}`;
+    addMessage('bot', 'Thinking...');
+
+    try {
+      let botReply;
+      if (WEBHOOK_URL) {
+        const res = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text }),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        botReply = data.response || data.answer || JSON.stringify(data);
+      } else {
+        botReply = "Demo reply (set WEBHOOK_URL to use your backend). Example: \"For SBI Card rewards, you earn X points per ₹100 and can redeem in the portal.\"";
+      }
+      // replace last bot message
+      messages[messages.length - 1] = { role: 'bot', text: botReply };
+    } catch (err) {
+      messages[messages.length - 1] = { role: 'bot', text: `Error: ${err.message}` };
+    }
+    render();
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    sendMessage(text);
+  });
+
+  // Seed initial greeting
+  addMessage('bot', 'Hi! Ask me anything about SBI Card, rewards, limits, or offers.');
+</script>
 </body>
 </html>
 
