@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Email Agent – AI Automation Hub</title>
+  <link rel="icon" href="assets/favicon.png" type="image/png">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div class="nav">
+        <a class="brand" href="index.html">
+          <img src="assets/favicon.png" alt="AI Hub">
+          <span>AI Automation Hub</span>
+        </a>
+        <nav class="nav-links">
+          <a class="nav-link" href="index.html">Home</a>
+          <a class="nav-link active" href="tool-email-agent.html">Email Agent</a>
+        </nav>
+        <a class="cta-button" href="mailto:gyanamc@gmail.com">Contact</a>
+      </div>
+    </header>
+
+    <main>
+      <div class="tool-hero">
+        <div class="crumbs">Home · Automation · Email Agent</div>
+        <h1>Automated email replies with policy guardrails</h1>
+        <p class="info">
+          Paste an incoming email and generate a compliant reply. Connect this form to your webhook/n8n flow.
+        </p>
+        <div class="tool-meta">
+          <span class="tag">Automation</span>
+          <span class="tag">Email</span>
+          <span class="tag">LLM</span>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <form class="form" id="emailForm">
+          <div>
+            <label for="subject">Subject</label>
+            <input id="subject" type="text" placeholder="Payment issue for my card" required />
+          </div>
+          <div>
+            <label for="body">Email body</label>
+            <textarea id="body" rows="6" placeholder="Paste the customer email..." required></textarea>
+          </div>
+          <div>
+            <label for="from">Your name (optional)</label>
+            <input id="from" type="text" placeholder="Agent name" />
+          </div>
+          <button type="submit" class="action" id="emailSubmit">Generate response</button>
+          <div id="emailResult" class="info"></div>
+        </form>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <span>© 2025 Kumar Gyanam • AI Automation Hub</span>
+        <span>
+          <a href="mailto:gyanamc@gmail.com">Email</a> ·
+          <a href="https://www.linkedin.com/in/kumar-gyanam/" target="_blank">LinkedIn</a>
+        </span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const form = document.getElementById('emailForm');
+    const resultBox = document.getElementById('emailResult');
+    const submitBtn = document.getElementById('emailSubmit');
+    const WEBHOOK_URL = 'https://YOUR_N8N_WEBHOOK_URL_HERE';
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Generating...';
+      resultBox.textContent = '⏳ Generating response...';
+      try {
+        const payload = {
+          subject: document.getElementById('subject').value,
+          body: document.getElementById('body').value,
+          from: document.getElementById('from').value,
+        };
+        const res = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        resultBox.textContent = data.response || 'Response ready.';
+      } catch (err) {
+        resultBox.textContent = '❌ Something went wrong. Please check your webhook URL.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Generate response';
+      }
+    });
+  </script>
+</body>
+</html>
+

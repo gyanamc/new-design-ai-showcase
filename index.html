@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Automation Hub – New Design</title>
+  <link rel="icon" href="assets/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div class="nav">
+        <a class="brand" href="#">
+          <img src="assets/favicon.png" alt="AI Hub">
+          <span>AI Automation Hub</span>
+        </a>
+        <nav class="nav-links">
+          <a class="nav-link active" href="#">Home</a>
+          <a class="nav-link" href="#tools">Tools</a>
+          <a class="nav-link" href="#about">About</a>
+          <a class="nav-link" href="#blog">Blog</a>
+        </nav>
+        <a class="cta-button" href="mailto:gyanamc@gmail.com">Contact</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-text">
+          <h1>Build with Agentic AI, Faster.</h1>
+          <p>
+            A curated set of AI automation tools across chat, voice, video, and document flows.
+            Explore production-ready demos and reuse patterns for your next project.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#tools">Explore tools</a>
+            <a class="button secondary" href="https://www.linkedin.com/in/kumar-gyanam/" target="_blank">Connect on LinkedIn →</a>
+          </div>
+          <div class="hero-card" style="margin-top:16px;">
+            <div class="hero-metrics">
+              <div class="metric">
+                <strong id="metric-tools">12</strong>
+                <span>AI tools</span>
+              </div>
+              <div class="metric">
+                <strong>4</strong>
+                <span>Categories</span>
+              </div>
+              <div class="metric">
+                <strong>Realtime</strong>
+                <span>Voice & chat</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-card">
+          <h3 style="margin:0 0 10px;">Featured This Week</h3>
+          <p style="margin:0 0 12px; color: var(--muted);">
+            Rewrite your resume with ATS-friendly keywords and tailored instructions.
+          </p>
+          <div class="tags" style="margin-bottom:12px;">
+            <span class="tag">Resume</span>
+            <span class="tag">Document AI</span>
+            <span class="tag">Webhook</span>
+          </div>
+          <a class="button primary" href="tool-rewrite-resume.html">Open rewrite tool</a>
+        </div>
+      </section>
+
+      <section class="controls" id="tools">
+        <div class="filters">
+          <button class="filter-chip active" data-filter="all">All</button>
+          <button class="filter-chip" data-filter="chat">Chat</button>
+          <button class="filter-chip" data-filter="voice">Voice</button>
+          <button class="filter-chip" data-filter="video">Video</button>
+          <button class="filter-chip" data-filter="documents">Documents</button>
+          <button class="filter-chip" data-filter="automation">Automation</button>
+        </div>
+        <div class="search">
+          <span class="icon">🔍</span>
+          <input id="searchInput" type="search" placeholder="Search tools, e.g., resume, voice, prompt..." />
+        </div>
+      </section>
+
+      <section class="grid" id="toolGrid">
+        <!-- cards injected via main.js -->
+      </section>
+
+      <section class="section" id="about">
+        <h2>Why this hub?</h2>
+        <p>
+          Every tool here is wired end-to-end: UI, UX, and backend integration patterns (webhooks, n8n, LLMs, vector DBs).
+          Clone, fork, or adapt these flows into your stack quickly.
+        </p>
+        <div class="stack">
+          <span class="pill">LLMs: OpenAI</span>
+          <span class="pill">Embeddings: Pinecone</span>
+          <span class="pill">Automation: n8n</span>
+          <span class="pill">Voice: ElevenLabs</span>
+          <span class="pill">Front-end: Vanilla HTML/CSS</span>
+          <span class="pill">Deploy: Static hosting</span>
+        </div>
+      </section>
+
+      <section class="section" id="blog">
+        <h2>Agentic AI insights</h2>
+        <p>Read quick takes on deploying agentic AI systems in production.</p>
+        <div class="stack">
+          <a class="pill" href="blog.html">All blog posts →</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <span>© 2025 Kumar Gyanam • AI Automation Hub</span>
+        <span>
+          <a href="mailto:gyanamc@gmail.com">Email</a> ·
+          <a href="https://www.linkedin.com/in/kumar-gyanam/" target="_blank">LinkedIn</a> ·
+          <a href="blog.html">Blog</a>
+        </span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
+

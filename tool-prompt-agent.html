@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prompt Agent – AI Automation Hub</title>
+  <link rel="icon" href="assets/favicon.png" type="image/png">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div class="nav">
+        <a class="brand" href="index.html">
+          <img src="assets/favicon.png" alt="AI Hub">
+          <span>AI Automation Hub</span>
+        </a>
+        <nav class="nav-links">
+          <a class="nav-link" href="index.html">Home</a>
+          <a class="nav-link active" href="tool-prompt-agent.html">Prompt Agent</a>
+        </nav>
+        <a class="cta-button" href="mailto:gyanamc@gmail.com">Contact</a>
+      </div>
+    </header>
+
+    <main>
+      <div class="tool-hero">
+        <div class="crumbs">Home · Chat · Prompt Agent</div>
+        <h1>Structured prompt builder</h1>
+        <p class="info">
+          Craft better prompts with roles, goals, constraints, and examples. Plug in your LLM endpoint to generate responses.
+        </p>
+        <div class="tool-meta">
+          <span class="tag">Chat</span>
+          <span class="tag">Prompts</span>
+          <span class="tag">LLM</span>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <form class="form" id="promptForm">
+          <div>
+            <label for="role">Role</label>
+            <input id="role" type="text" placeholder="Expert product manager" />
+          </div>
+          <div>
+            <label for="goal">Goal</label>
+            <input id="goal" type="text" placeholder="Summarize user feedback into themes" />
+          </div>
+          <div>
+            <label for="constraints">Constraints</label>
+            <textarea id="constraints" rows="3" placeholder="Keep it under 10 bullets, add metrics if available"></textarea>
+          </div>
+          <div>
+            <label for="examples">Few-shot examples</label>
+            <textarea id="examples" rows="4" placeholder="Input → Output pairs"></textarea>
+          </div>
+          <div>
+            <label for="userInput">Your request</label>
+            <textarea id="userInput" rows="4" placeholder="Paste text or ask a question"></textarea>
+          </div>
+          <button type="submit" class="action" id="promptSubmit">Generate prompt</button>
+          <div id="promptResult" class="info"></div>
+        </form>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <span>© 2025 Kumar Gyanam • AI Automation Hub</span>
+        <span>
+          <a href="mailto:gyanamc@gmail.com">Email</a> ·
+          <a href="https://www.linkedin.com/in/kumar-gyanam/" target="_blank">LinkedIn</a>
+        </span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const form = document.getElementById('promptForm');
+    const resultBox = document.getElementById('promptResult');
+    const submitBtn = document.getElementById('promptSubmit');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Building...';
+
+      const role = document.getElementById('role').value || 'Expert assistant';
+      const goal = document.getElementById('goal').value || 'Help the user';
+      const constraints = document.getElementById('constraints').value;
+      const examples = document.getElementById('examples').value;
+      const userInput = document.getElementById('userInput').value;
+
+      const prompt = `
+You are a ${role}.
+Goal: ${goal}.
+${constraints ? `Constraints: ${constraints}.` : ''}
+${examples ? `Examples:\n${examples}` : ''}
+User input:
+${userInput || '[Awaiting user input]'}
+Respond clearly and concisely.`;
+
+      resultBox.textContent = prompt.trim();
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Generate prompt';
+    });
+  </script>
+</body>
+</html>
+

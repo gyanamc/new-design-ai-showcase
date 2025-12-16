@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rewrite Resume – AI Automation Hub</title>
+  <link rel="icon" href="assets/favicon.png" type="image/png">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div class="nav">
+        <a class="brand" href="index.html">
+          <img src="assets/favicon.png" alt="AI Hub">
+          <span>AI Automation Hub</span>
+        </a>
+        <nav class="nav-links">
+          <a class="nav-link" href="index.html">Home</a>
+          <a class="nav-link active" href="tool-rewrite-resume.html">Rewrite Resume</a>
+        </nav>
+        <a class="cta-button" href="mailto:gyanamc@gmail.com">Contact</a>
+      </div>
+    </header>
+
+    <main>
+      <div class="tool-hero">
+        <div class="crumbs">Home · Documents · Rewrite Resume</div>
+        <h1>Rewrite your resume with ATS-friendly keywords</h1>
+        <p class="info">
+          Upload your resume, add role-specific keywords and guidance, and send to the AI resume optimizer.
+        </p>
+        <div class="tool-meta">
+          <span class="tag">Resume</span>
+          <span class="tag">Documents</span>
+          <span class="tag">Webhook</span>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <h3 style="margin-top:0;">How it works</h3>
+        <ul class="steps">
+          <li>1) Upload a PDF/DOC/DOCX resume (kept client-side until submission)</li>
+          <li>2) Add the role keywords (comma-separated)</li>
+          <li>3) (Optional) Add instructions such as “focus on leadership”</li>
+          <li>4) Submit — payload sent to the webhook for processing</li>
+        </ul>
+
+        <form class="form" id="resumeForm">
+          <div>
+            <label for="resumeFile">Resume file *</label>
+            <input id="resumeFile" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required />
+          </div>
+          <div>
+            <label for="keywords">Desired keywords *</label>
+            <input id="keywords" type="text" placeholder="e.g., React, JavaScript, Product ownership" required />
+          </div>
+          <div>
+            <label for="instructions">Instructions (optional)</label>
+            <textarea id="instructions" rows="4" placeholder="Keep it to one page, emphasize leadership, highlight metrics..."></textarea>
+          </div>
+          <button type="submit" class="action" id="submitBtn">Submit</button>
+          <div id="alert" class="info"></div>
+          <div class="info" id="sessionInfo"></div>
+        </form>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <span>© 2025 Kumar Gyanam • AI Automation Hub</span>
+        <span>
+          <a href="mailto:gyanamc@gmail.com">Email</a> ·
+          <a href="https://www.linkedin.com/in/kumar-gyanam/" target="_blank">LinkedIn</a>
+        </span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Generate UUID-like session ID
+    function generateSessionId() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+    function loadSession() {
+      let id = localStorage.getItem('resumeSessionId');
+      if (!id) {
+        id = generateSessionId();
+        localStorage.setItem('resumeSessionId', id);
+      }
+      document.getElementById('sessionInfo').textContent = `Session ID: ${id}`;
+      return id;
+    }
+
+    const WEBHOOK_URL = 'https://primary-production-da3f.up.railway.app/webhook-test/7eab2e1f-99b9-42ee-ab90-480548527e58';
+    const sessionId = loadSession();
+
+    const form = document.getElementById('resumeForm');
+    const resumeInput = document.getElementById('resumeFile');
+    const keywordsInput = document.getElementById('keywords');
+    const instructionsInput = document.getElementById('instructions');
+    const alertBox = document.getElementById('alert');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function showAlert(msg, type = 'info') {
+      alertBox.textContent = msg;
+      alertBox.style.color = type === 'error' ? 'var(--error)' : 'var(--muted)';
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const file = resumeInput.files[0];
+      if (!file) return showAlert('Please upload your resume file.', 'error');
+      if (!keywordsInput.value.trim()) return showAlert('Please add keywords.', 'error');
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+      showAlert('Uploading resume...');
+
+      try {
+        const base64 = await fileToBase64(file);
+        const payload = {
+          sessionId,
+          resume: {
+            name: file.name,
+            size: file.size,
+            mimeType: file.type,
+            data: base64,
+          },
+          keywords: keywordsInput.value.trim(),
+          instructions: instructionsInput.value.trim(),
+        };
+
+        const res = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (res.ok) {
+          showAlert('✅ Submitted successfully. We will process your resume.');
+          form.reset();
+        } else {
+          const text = await res.text();
+          throw new Error(`Server error ${res.status}: ${text}`);
+        }
+      } catch (err) {
+        showAlert(`❌ ${err.message}`, 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit';
+      }
+    });
+  </script>
+</body>
+</html>
+
